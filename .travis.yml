@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
 # command to install dependencies
-install: "pip install -r requirements.txt --use-mirrors"
+install: "make install"
 env:
   global:
     - secure: "dl9RXxzKAE26ePVllIQ7Y786moie5qjyg1ZYuyD38vW6BZZ3f2oh2KAWR2zR\nGoIA56RenkVCgaDkZ+GP9W2ry/dI/kkZACG3qW2S8exPVYGiXYkYROYLmFDH\nMGprozaOHQR1PqBaexhCvfORnz0JKBvj2pgBbr8GrMbnXvD6/jo="
