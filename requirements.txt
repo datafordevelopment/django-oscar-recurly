@@ -6,3 +6,4 @@ django-nose==1.1
 nose==1.1.2
 pinocchio==0.3.1
 django-extensions==0.9
+coveralls==0.2
