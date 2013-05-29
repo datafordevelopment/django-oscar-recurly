@@ -3,8 +3,6 @@ import os
 import sys
 import logging
 
-from coverage import coverage
-
 from django.conf import settings
 
 from oscar.defaults import OSCAR_SETTINGS
@@ -112,15 +110,9 @@ def run_tests(*test_args):
     
     if not test_args:
         test_args = ['tests']
-    c = coverage(source=['oscar_recurly'], omit=['*migrations*', '*tests*'])
-    c.start()
     num_failures = test_runner.run_tests(test_args)
-    c.stop()
     if num_failures:
         sys.exit(num_failures)
-    print "Generating HTML coverage report"
-    c.html_report()
-
 
 if __name__ == '__main__':
     configure()

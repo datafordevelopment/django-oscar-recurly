@@ -7,7 +7,6 @@ from django.dispatch.dispatcher import receiver
 from django.utils import timezone
 import recurly
 
-
 recurly.SUBDOMAIN = settings.RECURLY_SUBDOMAIN
 recurly.API_KEY = settings.RECURLY_API_KEY
 recurly.PRIVATE_KEY = settings.RECURLY_PRIVATE_KEY
