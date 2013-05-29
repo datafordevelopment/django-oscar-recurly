@@ -122,8 +122,7 @@ class Adjustment(models.Model):
         )
         recurly_account.charge(recurly_adjustment)
         
-        return cls._create_local(
-            user=account.user, 
+        return cls._create_local( 
             account=account, 
             uuid=recurly_adjustment.uuid, 
             description=description, 
@@ -144,8 +143,8 @@ class Adjustment(models.Model):
     @classmethod
     def _create_local(cls, account, uuid, description, accounting_code, origin, unit_amount, quantity, discount, tax, total, currency, taxable, start_date, end_date, created_at):
         adjustment = cls(
+            account=account,
             user=account.user, 
-            account=account, 
             uuid=uuid, 
             description=description, 
             accounting_code=accounting_code, 
@@ -619,7 +618,7 @@ class PlanAddOn(models.Model):
             recurly_plan_add_on = self.recurly_plan_add_on
             recurly_plan_add_on.unit_amount_in_cents = recurly.resource.Money(int(self.unit_amount * 100))
             recurly_plan_add_on.save()
-        super(Plan, self).save(*args, **kwargs)
+        super(PlanAddOn, self).save(*args, **kwargs)
         
 
 class Subscription(models.Model):
@@ -839,7 +838,7 @@ class Transaction(models.Model):
                         billing_info_first_six, billing_info_last_four):
         transaction = cls(
             account = account, 
-            user = accout.user, 
+            user = account.user, 
             invoice = invoice, 
             subscription = subscription, 
             uuid = uuid, 

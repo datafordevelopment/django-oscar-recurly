@@ -46,7 +46,7 @@ class TestCase(TestCase):
         self.user.last_name = last_name
         self.user.save()
         
-        self.account = Account.create(self.user, self.user.email, self.user.first_name, self.user.last_name, '', 'en')
+        self.account = Account.objects.get(account_code=self.user.username)
         self.assertTrue(self.account.recurly_account.state == 'active')
         self.assertTrue(self.account.hosted_login_url.find(self.account.hosted_login_token) >= 0)        
 

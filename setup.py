@@ -12,7 +12,7 @@ setup(name='django-oscar-recurly',
       license='BSD',
       packages=find_packages(exclude=['sandbox*', 'tests*']),
       install_requires=[
-          'django-oscar>=0.3',
+          'django-oscar==0.3',
           'recurly>=2.1.9,<2.2'],
       include_package_data=True,
       # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
