@@ -13,4 +13,4 @@ coverage:
 # (instead of upgrade) because we install Django in the .travis.yml
 # and upgrade would overwrite it.  We also build the sandbox as part of this target
 # to catch any errors that might come from that build process.
-travis: install coverage sandbox
+travis: install coverage
