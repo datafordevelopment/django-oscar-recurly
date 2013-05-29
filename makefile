@@ -6,9 +6,9 @@ install:
 	python setup.py develop
 
 coverage:
-    coverage run ./runtests.py --with-xunit
-    coverage xml -i
-
+	coverage run ./runtests.py --with-xunit
+	coverage xml -i
+    
 # It is important that this target only depends on install
 # (instead of upgrade) because we install Django in the .travis.yml
 # and upgrade would overwrite it.  We also build the sandbox as part of this target
