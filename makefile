@@ -1,6 +1,6 @@
 # These targets are not files
-.PHONY: install upgrade sandbox demo coverage ci i18n lint travis docs
-    
+.PHONY: install coverage travis
+
 install:
 	pip install -r requirements.txt --use-mirrors
 	python setup.py develop
