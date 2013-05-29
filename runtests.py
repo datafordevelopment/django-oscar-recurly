@@ -67,7 +67,6 @@ def configure():
             'django.contrib.staticfiles',
             'django.contrib.admin',
             'django.contrib.gis',
-            'compressor',
         ] + OSCAR_CORE_APPS + [
             'oscar_recurly',
         ],
