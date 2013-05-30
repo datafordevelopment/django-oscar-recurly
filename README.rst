@@ -186,3 +186,6 @@ Sample VISA vard:
     
 .. image:: https://secure.travis-ci.org/mynameisgabe/django-oscar-recurly.png?branch=master
     :target: http://travis-ci.org/#!/mynameisgabe/django-oscar-recurly
+
+.. image:: https://coveralls.io/repos/mynameisgabe/django-oscar-recurly/badge.png?branch=master
+	:target: https://coveralls.io/r/mynameisgabe/django-oscar-recurly?branch=master
