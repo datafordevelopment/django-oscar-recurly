@@ -6,7 +6,7 @@ install:
 	python setup.py develop
 
 coverage:
-	coverage run ./runtests.py --with-xunit
+	coverage run --source=oscar_recurly runtests.py --with-xunit
 	coverage xml -i
     
 # It is important that this target only depends on install
