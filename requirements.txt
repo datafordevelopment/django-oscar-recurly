@@ -1,6 +1,6 @@
 https://github.com/toastdriven/django-haystack/tarball/fd83d3f449c2197f93040bb3d7bc6083ea8e48b7#egg=django-haystack-2.0.0-beta
 South==0.7.5
-coverage==3.5.2
+coverage>=3.6
 mock==1.0b1
 django-nose==1.1
 nose==1.1.2
