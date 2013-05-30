@@ -2,7 +2,7 @@
 .PHONY: install coverage travis
 
 install:
-	pip install -r requirements.txt --use-mirrors
+	pip install -r requirements.txt
 	python setup.py develop
 
 coverage:
