@@ -35,16 +35,7 @@ class Account(models.Model):
     
     @classmethod
     def create(cls, user, email, first_name, last_name, company_name, accept_language):
-        recurly_account = recurly.Account(
-            account_code=user.username,
-            username=user.username,
-            email=user.email,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            company_name=company_name,
-            accept_language=accept_language
-        )
-        recurly_account.save()
+        recurly_account = cls._create_remote(user, company_name, accept_language)
         
         account = cls(
             user=user, 
@@ -60,6 +51,20 @@ class Account(models.Model):
         )
         account.save()
         return account
+        
+    @classmethod
+    def _create_remote(cls, user, company_name, accept_language):
+        recurly_account = recurly.Account(
+            account_code=user.username,
+            username=user.username,
+            email=user.email,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            company_name=company_name,
+            accept_language=accept_language
+        )
+        recurly_account.save()
+        return recurly_account
     
     @property
     def hosted_login_url(self):
@@ -250,6 +255,7 @@ class BillingInfo(models.Model):
     
     def save(self, *args, **kwargs):
         if self.id is not None:
+            recurly_billing_info = self.recurly_billing_info
             recurly_billing_info.first_name = self.first_name
             recurly_billing_info.last_name = self.last_name
             recurly_billing_info.company = self.company
@@ -262,11 +268,14 @@ class BillingInfo(models.Model):
             recurly_billing_info.phone = self.phone
             recurly_billing_info.vat_number = self.vat_number
             recurly_billing_info.ip_address = self.ip_address
-            recurly_billing_info.type = 'credit_card'
-            recurly_billing_info.number = self.number
-            recurly_billing_info.verification_value = self.verification_value
-            recurly_billing_info.month = self.month
-            recurly_billing_info.year = self.year
+            try:
+                recurly_billing_info.type = 'credit_card'
+                recurly_billing_info.number = self.number
+                recurly_billing_info.verification_value = self.verification_value
+                recurly_billing_info.month = self.month
+                recurly_billing_info.year = self.year
+            except AttributeError:
+                pass # not updating card info.
             recurly_billing_info.save()
         super(BillingInfo, self).save(*args, **kwargs)
 
@@ -420,29 +429,12 @@ class Invoice(models.Model):
         for line_item in recurly_invoice.line_items:
             try:
                 adjustment = account.adjustment_set.get(uuid=line_item.uuid)
-            except DoesNotExist:
+            except ObjectDoesNotExist:
                 adjustment = Adjustment._create_local(account, line_item.uuid, line_item.description, line_item.accounting_code, line_item.origin, line_item.unit_amount_in_cents / 100.0, line_item.quantity, line_item.discount_in_cents / 100.0, line_item.tax_in_cents / 100.0 , line_item.total_in_cents / 100.0, line_item.currency, line_item.taxable, line_item.start_date, line_item.end_date, line_item.created_at)
             
             adjustment.invoice = invoice
             adjustment.save()
         
-        for recurly_transaction in recurly_invoice.transactions:
-            try:
-                transaction = account.transaction_set.get(uuid=recurly_transaction.uuid)
-            except DoesNotExist:
-                transaction = Transaction._create_local(account, recurly_transaction.invoice, recurly_transaction.subscription, recurly_transaction.uuid, recurly_transaction.action, recurly_transaction.amount_in_cents / 100.0, 
-                    recurly_transaction.tax_in_cents / 100.0, recurly_transaction.currency, recurly_transaction.status, recurly_transaction.source, recurly_transaction.reference, recurly_transaction.test, 
-                    recurly_transaction.voidable, recurly_transaction.refundable, recurly_transaction.cvv_result, recurly_transaction.avs_result, recurly_transaction.avs_result_street, 
-                    recurly_transaction.avs_result_postal, recurly_transaction.created_at, recurly_transaction.account.account_code, recurly_transaction.account.first_name, recurly_transaction.account.last_name, 
-                    recurly_transaction.account.company, recurly_transaction.account.billing_info.first_name, recurly_transaction.account.billing_info.last_name, recurly_transaction.account.billing_info.address1, 
-                    recurly_transaction.account.billing_info.address2, recurly_transaction.account.billing_info.city, recurly_transaction.account.billing_info.state, recurly_transaction.account.billing_info.zip, 
-                    recurly_transaction.account.billing_info.country, recurly_transaction.account.billing_info.phone, recurly_transaction.account.billing_info.vat_number, 
-                    recurly_transaction.account.billing_info.card_type, recurly_transaction.account.billing_info.year, recurly_transaction.account.billing_info.month, recurly_transaction.account.billing_info.first_six,
-                    recurly_transaction.account.billing_info.last_four)
-            
-            transaction.invoice = self
-            transaction.save()
-            
         return invoice
         
     @classmethod
@@ -898,7 +890,7 @@ def sync_account(sender, instance, created, **kwargs):
             account.email, account.first_name, account.last_name = instance.email, instance.first_name, instance.last_name
             account.save()
         except ObjectDoesNotExist:
-            pass
+            account = Account.create(instance, instance.email, instance.first_name, instance.last_name, '', '')
         
 
 @receiver(pre_delete, sender=User)
